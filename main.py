@@ -125,3 +125,11 @@ def get_by_country(country: str, db: Session = Depends(get_db)):
     ).all()
 
     return prices
+
+
+@app.get("/")
+def home():
+    return {
+        "message": "Energy Price Intelligence API",
+        "docs": "/docs"
+    }
