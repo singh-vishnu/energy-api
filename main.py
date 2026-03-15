@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException,Path
 from sqlalchemy.orm import Session
 
 from database import engine, SessionLocal, Base
@@ -62,7 +62,7 @@ def get_prices(db: Session = Depends(get_db)):
 
 @app.get("/prices/{price_id}")
 
-def get_price(price_id: str, db: Session = Depends(get_db)):
+def get_price(price_id: str= Path(..., description="Unique ID of the energy price record", example="E101"), db: Session = Depends(get_db)):
 
     price = db.query(EnergyPrice).filter(
         EnergyPrice.id == price_id
@@ -77,11 +77,10 @@ def get_price(price_id: str, db: Session = Depends(get_db)):
 # UPDATE
 
 @app.put("/prices/{price_id}")
-
 def update_price(
-        price_id: str,
-        update: EnergyPriceUpdate,
-        db: Session = Depends(get_db)
+    update: EnergyPriceUpdate,
+    price_id: str = Path(..., description="ID of price record", examples=["E101"]),
+    db: Session = Depends(get_db)
 ):
 
     price = db.query(EnergyPrice).filter(
@@ -104,7 +103,7 @@ def update_price(
 
 @app.delete("/prices/{price_id}")
 
-def delete_price(price_id: str, db: Session = Depends(get_db)):
+def delete_price(price_id: str= Path(..., description="ID of price record to delete", example="E101"), db: Session = Depends(get_db)):
 
     price = db.query(EnergyPrice).filter(
         EnergyPrice.id == price_id
